@@ -192,8 +192,6 @@ var editTask = function(taskId) {
 };
 
 var deleteTask = function(taskId) {
-  console.log(taskId);
-
   for (var i = 0; i < tasks.length; i++) {
     if (tasks[i].id === parseInt(taskId)) {
       tasks.splice(i,1);
@@ -203,6 +201,21 @@ var deleteTask = function(taskId) {
   var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
   taskSelected.remove();
 };
+
+var saveTasks = function() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+var loadTasks = function(){
+  var localTasks = localStorage.getItem(tasks);
+  if(!localTasks)
+    return false;
+  tasks = JSON.parse(localTasks);
+
+  for(var i = 0;i < tasks.length; i++){
+    createTaskEl(localTasks[i]);
+  }
+}
 
 // Create a new task
 formEl.addEventListener("submit", taskFormHandler);
