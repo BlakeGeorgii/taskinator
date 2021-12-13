@@ -1,4 +1,5 @@
 var taskIdCounter = 0;
+var tasks = [];
 
 var formEl = document.querySelector("#task-form");
 var tasksToDoEl = document.querySelector("#tasks-to-do");
@@ -26,11 +27,13 @@ var taskFormHandler = function(event) {
 
   if (isEdit) {
     var taskId = formEl.getAttribute("data-task-id");
+
     completeEditTask(taskNameInput, taskTypeInput, taskId);
   } else {
     var taskDataObj = {
       name: taskNameInput,
-      type: taskTypeInput
+      type: taskTypeInput,
+      status: "to do"
     };
 
     createTaskEl(taskDataObj);
@@ -51,6 +54,10 @@ var createTaskEl = function(taskDataObj) {
   var taskActionsEl = createTaskActions(taskIdCounter);
   listItemEl.appendChild(taskActionsEl);
   tasksToDoEl.appendChild(listItemEl);
+
+  taskDataObj.id = taskIdCounter;
+
+  tasks.push(taskDataObj);
 
   // increase task counter for next unique id
   taskIdCounter++;
@@ -103,6 +110,14 @@ var completeEditTask = function(taskName, taskType, taskId) {
   taskSelected.querySelector("h3.task-name").textContent = taskName;
   taskSelected.querySelector("span.task-type").textContent = taskType;
 
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+      tasks[i].name = taskName;
+      tasks[i].type = taskType;
+      break;
+    }
+  }
+
   alert("Task Updated!");
 
   // remove data attribute from form
@@ -136,6 +151,13 @@ var taskStatusChangeHandler = function(event) {
 
   // convert value to lower case
   var statusValue = event.target.value.toLowerCase();
+
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+      tasks[i].status = statusValue;
+      break;
+    }
+  }
 
   if (statusValue === "to do") {
     tasksToDoEl.appendChild(taskSelected);
@@ -171,7 +193,13 @@ var editTask = function(taskId) {
 
 var deleteTask = function(taskId) {
   console.log(taskId);
-  // find task list element with taskId value and remove it
+
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+      tasks.splice(i,1);
+      break;
+    }
+  }
   var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
   taskSelected.remove();
 };
